@@ -2,4 +2,6 @@ Flask
 opencv-python-headless
 torch
 tqdm
-git+https://github.com/ultralytics/yolov5.git
+numpy
+pillow
+
