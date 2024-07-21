@@ -4,8 +4,8 @@
 
 1. Clone this repository:
     ```sh
-    git clone https://github.com/yourusername/yourrepository.git
-    cd yourrepository
+    git clone https://github.com/sowmyaJ99/cropped-objects.git
+    cd cropped-objects
     ```
 
 2. Install the required dependencies:
