@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .dropzone {
+            border: 2px dashed #4CAF50;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+            max-width: 400px; /* Adjust width as needed */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .dropzone:hover {
+            background-color: #f0f8f0;
+        }
+        .file-name {
+            font-size: 1em;
+            color: #333;
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .cropped-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .cropped-item {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        .cropped-item img {
+            max-width: 200px;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        /* Loading Overlay Styles */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .overlay .spinner {
+            border: 8px solid rgba(0, 0, 0, 0.1);
+            border-left: 8px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Video for Processing</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <div class="dropzone" id="dropzone">
+            Drag and drop your video file here or click to select
+        </div>
+        <input type="file" name="file" id="file" accept="video/*" style="display: none;">
+        <input type="submit" value="Upload Video">
+        <span class="file-name" id="file-name"></span>
+    </form>
+
+    {% if folder %}
+    <h2>Cropped Objects</h2>
+    <div class="cropped-container">
+        {% for filename in cropped_files %}
+        <div class="cropped-item">
+            <img src="{{ url_for('display_cropped', filename=filename) }}" alt="{{ filename }}">
+            <p>{{ filename }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Loading Overlay -->
+    <div class="overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file');
+        const fileNameSpan = document.getElementById('file-name');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const form = document.querySelector('form');
+
+        dropzone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        dropzone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropzone.style.backgroundColor = '#e0f0e0';
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.backgroundColor = '';
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.style.backgroundColor = '';
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files; // Update the file input with the dropped files
+                fileNameSpan.textContent = files[0].name;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameSpan.textContent = fileInput.files[0].name;
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            loadingOverlay.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
